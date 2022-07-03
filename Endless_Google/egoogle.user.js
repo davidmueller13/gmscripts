@@ -15,11 +15,6 @@
 // @noframes
 // ==/UserScript==
 
-if (location.href.indexOf("tbm=isch") !== -1) // NOTE: Don't run on image search
-    return;
-if (window.top !== window.self) // NOTE: Do not run on iframes
-    return;
-
 const centerElement = "#center_col";
 const loadWindowSize = 1.6;
 const filtersAll = ["#foot", "#bottomads"];
@@ -61,11 +56,20 @@ let pageNumber = 1;
 let prevScrollY = 0;
 let nextPageLoading = false;
 
+
+
 function requestNextPage() {
+  
+    if (location.href.indexOf("tbm=isch") !== -1 || window.top !== window.self) { // NOTE: Don't run on image search
+      return; 		
+     } else {
+  
     nextPageLoading = true;
     let nextPage = new URL(location.href);
-    if (!nextPage.searchParams.has("q")) return;
-
+    if (!nextPage.searchParams.has("q")) {
+      return;
+    }
+      
     nextPage.searchParams.set("start", String(pageNumber * 10));
     !msg.classList.contains("shown") && msg.classList.add("shown");
     fetch(nextPage.href)
@@ -102,6 +106,7 @@ function requestNextPage() {
             nextPageLoading = false;
             msg.classList.contains("shown") && msg.classList.remove("shown");
         });
+					}
 }
 
 function onScrollDocumentEnd() {
@@ -141,3 +146,5 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+       
+
